@@ -104,9 +104,9 @@ var p = new Promise(function(resolve, reject){
 
 ### 小结
 1. 对象的状态不受外界影响。Promise 对象代表一个异步操作，有三种状态
-    1. pending: 初始状态，不是成功或失败状态
-    2. fulfilled: 意味着操作成功完成
-    3. rejected: 意味着操作失败
+    - pending: 初始状态，不是成功或失败状态
+    - fulfilled: 意味着操作成功完成
+    - rejected: 意味着操作失败
 2. Promise 对象的状态改变，只有两种可能：从 Pending 变为 Resolved 和从 Pending 变为 Rejected。只要这两种情况发生，状态就凝固了，不会再变了。
 ```javascript
 new Promise(function(resolve, reject){
@@ -127,15 +127,15 @@ new Promise(function(resolve, reject){
 ```
 3. 优点：有了 Promise 对象，就可以将异步操作以同步操作的流程表达出来，避免了层层嵌套的回调函数。此外，Promise 对象提供统一的接口，使得控制异步操作更加容易。
 4. 缺点: 
-    1. 首先，无法取消 Promise，一旦新建它就会立即执行，无法中途取消.
-    2. 如果不设置回调函数，Promise 内部抛出的错误，不会反应到外部
-    3. 当处于 Pending 状态时，无法得知目前进展到哪一个阶段
+    - 首先，无法取消 Promise，一旦新建它就会立即执行，无法中途取消.
+    - 如果不设置回调函数，Promise 内部抛出的错误，不会反应到外部
+    - 当处于 Pending 状态时，无法得知目前进展到哪一个阶段
 
 5. 规范
-    1. Pending – Promise对象的初始状态，等到任务的完成或者被拒绝；Resolved – 任务执行完成并且成功的状态；Rejected – 任务执行完成并且失败的状态；
-    2. Promise的状态只可能从Pending状态转到Resolved状态或者Rejected状态，而且不能逆向转换，同时Resolved状态和Rejected状态也不能相互转换；
-    3. Promise对象必须实现then方法，then是promise规范的核心，而且then方法也必须返回一个Promise对象，同一个Promise对象可以注册多个then方法，并且回调的执行顺序跟它们的注册顺序一致；
-    4. then方法接受两个回调函数，它们分别为：成功时的回调和失败时的回调；并且它们分别在：Promise由Pending状态转换到Resolved状态时被调用和在Promise由Pending状态转换到Rejected状态时被调用。
+    - Pending – Promise对象的初始状态，等到任务的完成或者被拒绝；Resolved – 任务执行完成并且成功的状态；Rejected – 任务执行完成并且失败的状态；
+    - Promise的状态只可能从Pending状态转到Resolved状态或者Rejected状态，而且不能逆向转换，同时Resolved状态和Rejected状态也不能相互转换；
+    - Promise对象必须实现then方法，then是promise规范的核心，而且then方法也必须返回一个Promise对象，同一个Promise对象可以注册多个then方法，并且回调的执行顺序跟它们的注册顺序一致；
+    - then方法接受两个回调函数，它们分别为：成功时的回调和失败时的回调；并且它们分别在：Promise由Pending状态转换到Resolved状态时被调用和在Promise由Pending状态转换到Rejected状态时被调用。
 
 ### Promise.all
 有时候需要使用并行执行时可以用 Promise.all，then 返回的时间以最后一个异步执行的完成时间为准。

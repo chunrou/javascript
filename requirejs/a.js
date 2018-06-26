@@ -1,6 +1,6 @@
-define(function(){
+define(function(require, exports, modules){
   function fun1(){
     alert("it works");
   }
-  return fun1;
+  exports.f = fun1;
 })

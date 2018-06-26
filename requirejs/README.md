@@ -1,5 +1,3 @@
-https://www.cnblogs.com/HCJJ/p/6611669.html
-
 ## 模块化
 在 javascript 编程中，把每个功能单独封装起来，可以把这个封装称之为模块。
 
@@ -66,19 +64,62 @@ require会定义三个变量：define,require,requirejs，其中require === requ
 2. require 加载依赖模块，并执行加载完后的回调函数
 
 ### 定义模块
+#### 简单的值对
 ```javascript
+define({
+    'color':'red',
+    'size':'13px',
+    'width':'100px'
+});
+```
+#### 非依赖的函数式定义
+```javascript
+//方法一
 define(function(){
     function fun1(){
       alert("it works");
     }
-
-    fun1();
+    return fun1;
 })
+
+//方法二
+define(function(require,exports,modules){
+    function fun1(){
+      alert("it works");
+    }
+    exports.f = fun1;
+})
+1. require:加载模块时使用。
+2. exports:导出模块的返回值。
+3. modules:定义模块的相关信息以及参数。
+```
+#### 依赖的函数式定义
+```javascript
+define(['jquery','./utils'], function($) {
+    $(function() {
+        alert($);
+    });
+});
 ```
 
 ### 调用模块
+#### 简单调用
 ```javascript
 require(["js/a"]);
+```
+#### 依赖调用
+```javascript
+define(['jquery','require'], function($,require) {
+    $(function() {
+        //方式一
+        require(['utils'],function(utils){
+            utils.sayHellow('Hellow World!');
+        });
+        //方式二：
+        var utils = require('utils');
+        utils.sayHellow('hellow World')
+    });
+});
 ```
 
 ### 配置信息
@@ -113,7 +154,8 @@ require(["jquery","a"],function($, a){
 ```
 
 ## 小结
-1. 在使用 requirejs 时，加载模块时不用写.js后缀的，当然也是不能写后缀
-2. require.config 是用来配置模块加载位置，简单点说就是给模块起一个更短更好记的名字
-3. 通过paths的配置会使我们的模块名字更精炼，paths还有一个重要的功能，就是可以配置多个路径，如果远程cdn库没有加载成功，可以加载本地的库
-4. 加载requirejs脚本的script标签加入了data-main属性，这个属性指定的js将在加载完reuqire.js后处理，我们把require.config的配置加入到data-main后
+- 一个 js 文件为一个模块，每个文件的名称为模块ID
+- 在使用 requirejs 时，加载模块时不用写.js后缀的，当然也是不能写后缀
+- require.config 是用来配置模块加载位置，简单点说就是给模块起一个更短更好记的名字
+- 通过paths的配置会使我们的模块名字更精炼，paths还有一个重要的功能，就是可以配置多个路径，如果远程cdn库没有加载成功，可以加载本地的库
+- 加载requirejs脚本的script标签加入了data-main属性，这个属性指定的js将在加载完reuqire.js后处理，我们把require.config的配置加入到data-main后
