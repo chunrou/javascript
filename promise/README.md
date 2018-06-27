@@ -143,7 +143,7 @@ new Promise(function(resolve, reject){
     var promise1 = Promise.resolve(3);
     var promise2 = 42;
     var promise3 = new Promise(function(resolve, reject) {
-    setTimeout(resolve, 2000, 'foo');
+        setTimeout(resolve, 2000);
     });
 
     Promise.all([promise1, promise2, promise3]).then(function(values) {
