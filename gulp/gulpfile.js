@@ -36,7 +36,7 @@ gulp.task('rjs', function () {
         .pipe(concat("index.js"))           //合并
         .pipe(gulp.dest(jsDist))          //输出保存
         .pipe(rename("app.min.js"))          //重命名
-        .pipe(uglify())                        //压缩
+        .pipe(minjs())                        //压缩
         .pipe(gulp.dest(jsDist));         //输出保存
 
     });
