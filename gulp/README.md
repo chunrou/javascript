@@ -26,62 +26,21 @@ gulp.task('default', function() {
 4. 运行 gulp `gulp`
 
 ## gulp API
-- `gulp.src(url)` 路径匹配
-    - `gulp.src('./assets/*.js')` 匹配 assets 目录下所有 js 文件
-    - `gulp.src('assets/**/*.js')` 匹配 assets 目录下所有目录的所有 js 文件
+### src
+`gulp.src(url)` 路径匹配
+- `gulp.src('./assets/*.js')` 匹配 assets 目录下所有 js 文件
+- `gulp.src('assets/**/*.js')` 匹配 assets 目录下所有目录的所有 js 文件
+
+### task
 - `gulp.task(name, fn)` 定义一个任务
 ```javascript
-gulp.task('somename', function() {
-  // 做一些事
+gulp.task('hello', function() {
+    console.log('Hello world!');
 });
 ```
-- 一个包含任务列表的数组，这些任务会在你当前任务运行之前完成
-```javascript
-gulp.task('mytask', ['array', 'of', 'task', 'names'], function() {
-  // 做一些事
-});
-```
-- 接受一个 callback
-```javascript
-// 在 shell 中执行一个命令
-var exec = require('child_process').exec;
-gulp.task('jekyll', function(cb) {
-  // 编译 Jekyll
-    exec('jekyll build', function(err) {
-        if (err) return cb(err); // 返回 error
-        cb(); // 完成 task
-    });
-});
-```
-- 返回一个 stream
-```javascript
-gulp.task('somename', function() {
-    var stream = gulp.src('client/**/*.js')
-    .pipe(minify())
-    .pipe(gulp.dest('build'));
-    return stream;
-});
-```
-- 返回一个 promise
-```javascript
-var Q = require('q');
-
-gulp.task('somename', function() {
-    var deferred = Q.defer();
-
-    // 执行异步的操作
-    setTimeout(function() {
-    deferred.resolve();
-    }, 1);
-
-    return deferred.promise;
-});
-```
-## task 小结
-- 默认的，task 将以最大的并发数执行，也就是说，gulp 会一次性运行所有的 task 并且不做任何等待
-- 如果你想要创建一个序列化的 task 队列，并以特定的顺序执行，需要做两件事
-    - 给出一个提示，来告知 task 什么时候执行完毕
-    - 并且再给出一个提示，来告知一个 task 依赖另一个 task 的完成
+- `gulp hello` 执行任务 `hello`
+- `gulp.task('default', fn)` 定义一个默认任务，`gulp` 执行默认任务
+- `gulp.task('default',['one','two','three']);`，一个包含任务列表的数组，这些任务会在你当前任务运行之前完成
 ```javascript
     var gulp = require('gulp');
 
@@ -92,19 +51,76 @@ gulp.task('somename', function() {
     });
 
     // 定义一个所依赖的 task 必须在这个 task 执行之前完成
-    gulp.task('two', ['one'], function() {
+    gulp.task('two', function() {
         // 'one' 完成后
     });
 
-    gulp.task('default', ['one', 'two']);
+    gulp.task('default', ['one', 'one', 'two']);
 ```
-- `gulp.watch(path, function(event){})` 监听路径下文件变化
+### task 异步
+- 异步实现之回调
+```javascript
+    var gulp = require('gulp');
+    gulp.task('one', function(cb) {
+        setTimeout(function(){
+            console.log('one is done');
+            cb()
+        },5000);
+         // 如果 err 不是 null 或 undefined，则会停止执行，且注意，这样代表执行失败了
+    });
+
+    // 定义一个所依赖的 task 必须在这个 task 执行之前完成
+    gulp.task('two', ['one'], function() {
+        console.log('tow')
+    });
+
+    gulp.task('default', ['two']);
+```
+- 异步实现之promise
+```javascript
+var Q = require('q');
+gulp.task('one', function() {
+    var deferred = Q.defer();
+    setTimeout(function() {
+        deferred.resolve();
+    }, 3000);
+  return deferred.promise;
+});
+ 
+gulp.task('two',['one'],function(){
+    console.log('two is done');
+});
+```
+### watch
+`gulp.watch(path, function(event){})` 监听路径下文件变化
 ```javascript
     gulp.watch('js/**/*.js', function(event) {
         console.log('File ' + event.path + ' was ' + event.type + ', running tasks...');
     });
     //event.type 发生的变动的类型：added, changed 或者 deleted
     //event.path 触发了该事件的文件的路径
+```
+
+### run
+`gulp.run()`表示要执行的任务。可能会使用单个参数的形式传递多个任务
+```javascript
+gulp.task('end',function(){
+    gulp.run('task1','task3','task2');
+});
+```
+注意：任务是尽可能多的并行执行的，并且可能不会按照指定的顺序运行。
+
+### dest
+gulp.dest()方法是用来写文件的，其语法为`gulp.dest(path[,options])`
+```javascript
+var gulp = require('gulp');
+gulp.src('script/jquery.js')　       // 获取流
+    .pipe(gulp.dest('dist/foo.js')); // 写放文件
+
+//有通配符开始出现的那部分路径为 **/*.js
+gulp.src('script/**/*.js')
+    .pipe(gulp.dest('dist')); //最后生成的文件路径为 dist/**/*.js
+//如果 **/*.js 匹配到的文件为 jquery/jquery.js ,则生成的文件路径为 dist/jquery/jquery.js
 ```
 
 ## 开启本地服务 gulp-connect
